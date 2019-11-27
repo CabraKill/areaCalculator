@@ -2,8 +2,8 @@ import cv2
 
 #cap = cv2.VideoCapture("172.20.10.11")
 frame = cv2.imread("testeArea.jpeg")
-while True:
-    #cv2.imshow("Video", frame)
+def draw():
+    cv2.imshow("Photo", frame)
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.bilateralFilter(gray, 11, 17, 17)
@@ -21,15 +21,18 @@ while True:
             cx = int(M['m10']/M['m00'])
             cy = int(M['m01']/M['m00'])
             
+            text = "predict: [{}]%".format(M['m00'])
+            print(text)
             cv2.putText(img=frame, fontScale=0.5, color=(255, 0, 0),
-                    text="predict: [{}]%".format(M['m00']),
+                    text=text,
                     thickness=3, fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(cx, cy))
             cv2.drawContours(frame, c, -1, (0,255,0), 3)
-    cv2.imshow("Video", frame)
-    
-   
+    cv2.imshow("Final", frame)
+
+draw()
+while True:
     k = cv2.waitKey(30) & 0xff
     if k == 27:
         break
-cap.release()
+#cap.release()
 cv2.destroyAllWindows()
