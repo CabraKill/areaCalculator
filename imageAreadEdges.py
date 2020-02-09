@@ -14,6 +14,7 @@ def draw():
 
     
     #cv2.drawContours(frame, contours, -1, (0,255,0), 3)
+    #print(contours)
     for c in contours:
         #cnt = contours[0]
         M = cv2.moments(c)
