@@ -87,9 +87,13 @@ class Application:
         x = []
         y = []
         # print("current x: {}".format(i[0][0][0]))
-        for i in iDataCurrent.contours[iDataCurrent.currentIndex][0]:
+        for contourIndex in range(len(iDataCurrent.contours)):
+            for i in iDataCurrent.contours[contourIndex][0]:
+                x.append(i[0][0])
+                y.append(i[0][1])
+        """for i in iDataCurrent.contours[iDataCurrent.currentIndex][0]:
             x.append(i[0][0])
-            y.append(i[0][1])
+            y.append(i[0][1])"""
         #x, y = np.meshgrid(x, y)
         z = np.multiply(x, 0)
         z = np.subtract(z, -1)
@@ -99,9 +103,8 @@ class Application:
         #x, y, z = self.createPlane()
         #x, y, z = self.createMap(x, y, z)
         #surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0,antialiased=False, label='3d Visualization')
-        x, y, z = self.plot_surface(np.array(x), np.array(y), np.array(z))
-        surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0,
-                               antialiased=False, label='3d Visualization')
+        #x, y, z = self.plot_surface(np.array(x), np.array(y), np.array(z))
+        #surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0,antialiased=False, label='3d Visualization')
 
         #x, y, z = self.createMap(x, y, z)
         #surf = ax.contour3D(x, y, z, 50, cmap='binary')
@@ -109,20 +112,41 @@ class Application:
         #surf = ax.plot_wireframe(x, y, z, rstride=5, cstride=5, label='3d Visualization')
         #x, y, z = self.createMap(x, y, z,square=False)
         #surf = ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True)
-        #ax.legend()
+        x, y, z = self.linePlot3D(x, y, z, heigth=5, divisions=50)
+        surf = ax.plot(x, y, z, label='Repartições')
+        # ax.legend()
 
         # Customize the z axis.
         ax.set_zlim(-1.01, 1.01)
         ax.zaxis.set_major_locator(LinearLocator(10))
         ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
-        #ax.set_xlabel('x')
-        #ax.set_ylabel('y')
-        #ax.set_zlabel('z')
+        # ax.set_xlabel('x')
+        # ax.set_ylabel('y')
+        # ax.set_zlabel('z')
         # Add a color bar which maps values to colors.
-        fig.colorbar(surf, shrink=0.5, aspect=5)
+        #fig.colorbar(surf, shrink=0.5, aspect=5)
         #ax.set_title('Surface plot')
         plt.show()
+
+    @classmethod
+    def linePlot3D(self, areaX, areaY, areaZ, heigth, start=0, divisions=100):
+        zLine = np.arange(start, heigth, (heigth - start)/divisions)
+        surfaceX = areaX.copy()
+        surfaceY = areaY.copy()
+        surfaceZ = areaX.copy()
+        for i in range(divisions):
+            surfaceX = np.concatenate((surfaceX, areaX))
+            surfaceY = np.concatenate((surfaceY, areaY))
+            lineZ = np.full([len(areaX)], zLine[i])
+            surfaceZ = np.concatenate((surfaceZ, lineZ))
+        print("len = x: {} | y: {} | z: {}".format(
+            len(surfaceX), len(surfaceY), len(surfaceZ)))
+        print("First point= x:{} | y:{} | z:{}".format(
+            areaX[0], areaY[0], zLine[0]))
+        print("last point= x:{} | y:{} | z:{}".format(
+            areaX[-1], areaY[-1], zLine[-1]))
+        return [surfaceX, surfaceY, surfaceZ]
 
     @classmethod
     def plotArea(self, iDataCurrent):
@@ -155,6 +179,8 @@ class Application:
             print("current size: {}".format(len(i[0])))
             # print("current array: {}".format(i[0]))
             print("current x: {}".format(i[0][0][0]))
+            x = []
+            y = []
             for j in i[0]:
                 x.append(j[0][0])
                 y.append(j[0][1])
@@ -191,38 +217,22 @@ class Application:
 
     @classmethod
     def plot_surface(self, areaX, areaY, areaZ, size=300):
-        """surfaceX = []
-        surfaceY = []
-        surfaceZ = []
-        for i in range(len(areaX)):
-            surfaceX.append(areaX)
-        for i in range(len(areaY)):
-            surfaceY.append(areaZ)
-        for i in range(len(areaZ)):
-            surfaceZ.append(areaZ)"""
-        #surfaceZ = np.zeros([len(areaX),len(areaY)])
-
         """X = np.arange(-5, 5, 0.25)
         Y = np.arange(-5, 5, 0.25)
         X, Y = np.meshgrid(X, Y)
         R = np.sqrt(X**2 + Y**2)
-        Z = np.sin(R)
-        surfaceX = X
-        surfaceY = Y
-        surfaceZ = Z"""
-        areaXX = areaX.copy()
-        for i in range(len(areaX)):
-            areaXX.append(areaX[i])
-        areaYY = areaY.copy()
-        np.concatenate(areaYY,areaYY)
-        surfaceX, surfaceY = np.meshgrid(areaXX,areaXX)
-        #surfaceZ = np.zeros([len(areaX),len(areaY)])
-        lineZ = areaZ.copy()
-        np.concatenate(lineZ,lineZ)
+        Z = np.sin(R)"""
+
+        doubleAreaX = np.concatenate((areaX, areaX))
+        doubleAreaY = np.concatenate((areaY, areaY))
+        line0Z = np.zeros([len(areaZ)])
+        doubleAreaZ = np.concatenate((areaZ, line0Z))
+        print("doubleAreaZ size: {}".format(len(doubleAreaX)))
+        surfaceX, surfaceY = np.meshgrid(doubleAreaX, doubleAreaY)
         surfaceZ = []
-        for i in range(len(lineZ)):
-            surfaceZ.append(lineZ)
-        print("surfacez size:"+str(len(surfaceZ)))
+        for i in range(len(doubleAreaZ)):
+            surfaceZ.append(doubleAreaZ)
+        # return [X, Y, Z]
         return [surfaceX, surfaceY, np.array(surfaceZ)]
 
     @classmethod
