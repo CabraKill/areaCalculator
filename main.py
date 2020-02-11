@@ -15,9 +15,10 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
-img = fn.resizeImg(cv2.imread("testeArea.jpeg"), 500)
+#img = fn.resizeImg(cv2.imread("testeArea.jpeg"), 500)
 # img = fn.resizeImg(cv2.imread("carregador1.jpg"), 500)
 # img = fn.resizeImg(cv2.imread("chaveiroCabuto.jpg"), 500)
+img = fn.resizeImg(cv2.imread("perfilIsopor4.jpg"), 500)
 
 
 class Application:
@@ -47,14 +48,22 @@ class Application:
         self.imageCannyDrawLabel = Label(
             self.imageCannyDrawFrame, text="Canny Draw")
         self.imageCannyDrawLabel.pack()
+        self.imageCannyDrawSliderBlur = Scale(
+            self.imageCannyDrawFrame, from_=0, to=10, orient=VERTICAL)
+        self.imageCannyDrawSliderBlur.pack(side="left")
         self.imageCannyDraw = fn.ImgTk(
-            self.imageCannyDrawFrame, self.imageCannyData.imageMask)
+            self.imageCannyDrawFrame, self.imageCannyData.imageSource)
         self.imageCannyDraw.pack()
         self.imageCannyDraw.bind(
             "<Button-1>", lambda e: self.click(self.imageCannyData, self.imageCannyDraw, self.imageCannyDrawSlider))
+        self.imageCannyDraw.bind(
+            "<Button-3>", lambda e: self.plotSurface(self.imageCannyData))
+        self.imageCannyData.updateImageWidgetDrawed(self.imageCannyDraw, None)
+
         self.imageCannyDrawSlider = Scale(self.imageCannyDrawFrame, from_=0, to=len(
             self.imageCannyData.contours)-1, orient=HORIZONTAL, command=lambda x: self.imageCannyData.updateImageWidgetDrawed(self.imageCannyDraw, int(x)))
         self.imageCannyDrawSlider.pack()
+
         # self.imageCannyDrawSlider.bind(command= lambda x:self.imageCannyData.updateImageWidgetDrawed(self.imageCannyDraw,x))
 
         self.imageCannyMaskPack = fn.packFrameLabelImage(
@@ -76,7 +85,6 @@ class Application:
         # iData.updateImage(image, w)
         iData.updateImageWidgetDrawed(w, None)
         slider.set(iData.currentIndex)
-        self.plotSurface(iData)
 
     @classmethod
     def plotSurface(self, iDataCurrent):
@@ -87,13 +95,28 @@ class Application:
         x = []
         y = []
         # print("current x: {}".format(i[0][0][0]))
-        for contourIndex in range(len(iDataCurrent.contours)):
+        # print everything
+        """for contourIndex in range(len(iDataCurrent.contours)):
             for i in iDataCurrent.contours[contourIndex][0]:
-                x.append(i[0][0])
-                y.append(i[0][1])
-        """for i in iDataCurrent.contours[iDataCurrent.currentIndex][0]:
+                x.append(i[0][1])
+                y.append(i[0][0])"""
+        width = iDataCurrent.imageSource.shape[1]
+        height = iDataCurrent.imageSource.shape[0]
+        ax.set_xlim(0, width)
+        ax.set_ylim(0, height)
+        ax.set_zlim(0, 10)
+        print("w: {} heigth: {}".format(width,height))
+        for i in iDataCurrent.contours[iDataCurrent.currentIndex][0]:
+
+            pointX = width - 1 - i[0][0]
+            pointX =  0 if pointX < 0 else pointX
+            pointY =  height - 1 - i[0][1]
+            pointY = 0 if pointY < 0 else pointY
+
             x.append(i[0][0])
-            y.append(i[0][1])"""
+            y.append(pointY)
+        print("oioioioi: {}".format(
+            iDataCurrent.contours[iDataCurrent.currentIndex][0][0]))
         #x, y = np.meshgrid(x, y)
         z = np.multiply(x, 0)
         z = np.subtract(z, -1)
@@ -112,14 +135,18 @@ class Application:
         #surf = ax.plot_wireframe(x, y, z, rstride=5, cstride=5, label='3d Visualization')
         #x, y, z = self.createMap(x, y, z,square=False)
         #surf = ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True)
-        x, y, z = self.linePlot3D(x, y, z, heigth=5, divisions=50)
+        x, y, z = self.mapToDivison3D(x, y, z, heigth=1, divisions=50)
         surf = ax.plot(x, y, z, label='Repartições')
+        #x, y, z = self.mapToDivison3D(x, y, z, heigth=5, divisions=1)
+        #surf = ax.scatter(x, y, z)
         # ax.legend()
-
+        
+        #plt.xlim(0, width)
+        
         # Customize the z axis.
-        ax.set_zlim(-1.01, 1.01)
-        ax.zaxis.set_major_locator(LinearLocator(10))
-        ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+        #ax.set_zlim(-1.01, 1.01)
+        #ax.zaxis.set_major_locator(LinearLocator(10))
+        #ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
         # ax.set_xlabel('x')
         # ax.set_ylabel('y')
@@ -130,7 +157,7 @@ class Application:
         plt.show()
 
     @classmethod
-    def linePlot3D(self, areaX, areaY, areaZ, heigth, start=0, divisions=100):
+    def mapToDivison3D(self, areaX, areaY, areaZ, heigth, start=0, divisions=100):
         zLine = np.arange(start, heigth, (heigth - start)/divisions)
         surfaceX = areaX.copy()
         surfaceY = areaY.copy()

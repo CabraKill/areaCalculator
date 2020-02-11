@@ -3,7 +3,7 @@ import cv2
 
 
 class ImageData:
-    def __init__(self, imageSource, imageMask, contours):
+    def __init__(self, imageSource, imageMask, contours, othersFrames=None):
         """Sets the mask image and contours of the current segmentation."""
         self.imageSource = imageSource.copy()
         self.imageMask = imageMask
