@@ -1,5 +1,6 @@
 import PIL
 import cv2
+import imageOperation as iop
 
 
 class ImageData:
@@ -33,14 +34,24 @@ class ImageData:
         print("contour: {}".format([self.contours[i][0][0]]))
         print("length: {}".format(len(self.contours[i])))
         cv2.drawContours(imageCopy, [self.contours[i][0]], -1, (0, 255, 0), 3)
-        
+
         if(drawValues):
             M = cv2.moments(self.contours[i][0])
             text = "prediction: [{}]%".format(M['m00'])
             print(text)
-            cv2.putText(img=imageCopy, fontScale=0.5, color=(0, 255, 0),
+            """cv2.putText(img=imageCopy, fontScale=0.6, color=(0, 255, 0),
+                        text="+",
+                        thickness=2, fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(self.contours[i][1], self.contours[i][2]))"""
+            cv2.circle(img=imageCopy, center=(
+                self.contours[i][1], self.contours[i][2]), radius=5, color=(255, 0, 0), thickness=2)
+            cv2.putText(img=imageCopy, fontScale=0.8, color=(0, 0, 255),
                         text=text,
-                        thickness=1, fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(self.contours[i][1], self.contours[i][2]))
+                        thickness=2, fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(0, 20))
+            #self.drawQuota(imageCopy, point2=(self.contours[i][1], self.contours[i][2]))
+            iop.drawQuota(image=imageCopy, point2=(
+                self.contours[i][1], self.contours[i][2]))
+            iop.drawQuota(image=imageCopy, point2=(
+                self.contours[i][1], self.contours[i][2]),orientation=1)
         return imageCopy
 
     def updateImageWidgetDrawed(self, w, index):
@@ -49,3 +60,20 @@ class ImageData:
         self.updateCurrentIndex(index)
         self.updateImage(self.drawIndexedContour(
             self.imageSource, self.currentIndex), w)
+
+    def drawQuota(self, image, point2, point1=None):
+        point1 = [0, 0] if point1 == None else point1
+        offSet = 20
+        quota = 20
+        color = [255, 0, 0]
+        thickness = 2
+        # horizontal line
+        cv2.line(image, (point1[0]+offSet*0, point2[1] +
+                         offSet + int(quota/2)), (point2[0]-offSet*0, point2[1]+offSet+int(quota/2)), color, thickness)
+        # left line
+        cv2.line(image, (point1[0]+offSet*0, point2[1] +
+                         offSet), (point1[0]+offSet*0, point2[1]+offSet+quota), color, thickness)
+
+        # right line
+        cv2.line(image, (point2[0]-offSet*0, point2[1] +
+                         offSet), (point2[0]-offSet*0, point2[1]+offSet+quota), color, thickness)

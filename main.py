@@ -5,6 +5,7 @@ import functionsPy as fn
 import imageSegmentation as imgSeg
 from imageData import ImageData
 from const import version
+import pathlib
 
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
@@ -17,10 +18,15 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 #img = fn.resizeImg(cv2.imread("testeArea.jpeg"), 500)
 # img = fn.resizeImg(cv2.imread("carregador1.jpg"), 500)
-# img = fn.resizeImg(cv2.imread("chaveiroCabuto.jpg"), 500)
-img = fn.resizeImg(cv2.imread("perfilIsopor4.jpg"), 500)
+#img = fn.resizeImg(cv2.imread("chaveiroCabuto.jpg"), 500)
+#img = fn.resizeImg(cv2.imread("perfilIsopor4.jpg"), 500)
+#img = fn.resizeImg(cv2.imread("photosTest\\pratinho1.jpg"), 500)
+img = fn.resizeImg(cv2.imread("photosTest\\pratinho2Q.jpg"), 500)
+#img = fn.resizeImg(cv2.imread("photosTest\\calda1.jpg"), 500)
+#print(str(pathlib.Path(__file__).parent.absolute())+"\\photosTest\\papelão1.jpg")
+#img = fn.resizeImg(cv2.imread("photosTest\\papelao1.jpg"), 500)
 
-
+img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 class Application:
     def __init__(self, master=None):
         self.title = Label(text="Tipos de segmentação")
@@ -48,11 +54,9 @@ class Application:
         self.imageCannyDrawLabel = Label(
             self.imageCannyDrawFrame, text="Canny Draw")
         self.imageCannyDrawLabel.pack()
-        self.imageCannyDrawSliderBlur = Scale(
-            self.imageCannyDrawFrame, from_=0, to=10, orient=VERTICAL)
-        self.imageCannyDrawSliderBlur.pack(side="left")
-        self.imageCannyDraw = fn.ImgTk(
-            self.imageCannyDrawFrame, self.imageCannyData.imageSource)
+        #self.imageCannyDrawSliderBlur = Scale(self.imageCannyDrawFrame, from_=0, to=10, orient=VERTICAL)
+        #self.imageCannyDrawSliderBlur.pack(side="left")
+        self.imageCannyDraw = fn.ImgTk(self.imageCannyDrawFrame, self.imageCannyData.imageSource)
         self.imageCannyDraw.pack()
         self.imageCannyDraw.bind(
             "<Button-1>", lambda e: self.click(self.imageCannyData, self.imageCannyDraw, self.imageCannyDrawSlider))
