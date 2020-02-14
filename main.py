@@ -6,6 +6,7 @@ import imageSegmentation as imgSeg
 from imageData import ImageData
 from const import version
 import pathlib
+import imageOperation as iop
 
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
@@ -21,12 +22,15 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 #img = fn.resizeImg(cv2.imread("chaveiroCabuto.jpg"), 500)
 #img = fn.resizeImg(cv2.imread("perfilIsopor4.jpg"), 500)
 #img = fn.resizeImg(cv2.imread("photosTest\\pratinho1.jpg"), 500)
-img = fn.resizeImg(cv2.imread("photosTest\\pratinho2Q.jpg"), 500)
+img = cv2.imread("photosTest\\pratinho2Q.jpg")
 #img = fn.resizeImg(cv2.imread("photosTest\\calda1.jpg"), 500)
-#print(str(pathlib.Path(__file__).parent.absolute())+"\\photosTest\\papelão1.jpg")
+# print(str(pathlib.Path(__file__).parent.absolute())+"\\photosTest\\papelão1.jpg")
 #img = fn.resizeImg(cv2.imread("photosTest\\papelao1.jpg"), 500)
 
-img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+img = fn.resizeImg(img, 500)
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+
 class Application:
     def __init__(self, master=None):
         self.title = Label(text="Tipos de segmentação")
@@ -55,14 +59,18 @@ class Application:
             self.imageCannyDrawFrame, text="Canny Draw")
         self.imageCannyDrawLabel.pack()
         #self.imageCannyDrawSliderBlur = Scale(self.imageCannyDrawFrame, from_=0, to=10, orient=VERTICAL)
-        #self.imageCannyDrawSliderBlur.pack(side="left")
-        self.imageCannyDraw = fn.ImgTk(self.imageCannyDrawFrame, self.imageCannyData.imageSource)
+        # self.imageCannyDrawSliderBlur.pack(side="left")
+        self.imageCannyDraw = fn.ImgTk(
+            self.imageCannyDrawFrame, self.imageCannyData.imageSource)
         self.imageCannyDraw.pack()
         self.imageCannyDraw.bind(
             "<Button-1>", lambda e: self.click(self.imageCannyData, self.imageCannyDraw, self.imageCannyDrawSlider))
         self.imageCannyDraw.bind(
             "<Button-3>", lambda e: self.plotSurface(self.imageCannyData))
         self.imageCannyData.updateImageWidgetDrawed(self.imageCannyDraw, None)
+
+        self.imageCannyDrawScaleButton = Button(self.imageCannyDrawFrame, text="º", command=self.imageCannyData.updateScale)
+        self.imageCannyDrawScaleButton.pack(side="right")
 
         self.imageCannyDrawSlider = Scale(self.imageCannyDrawFrame, from_=0, to=len(
             self.imageCannyData.contours)-1, orient=HORIZONTAL, command=lambda x: self.imageCannyData.updateImageWidgetDrawed(self.imageCannyDraw, int(x)))
@@ -109,12 +117,12 @@ class Application:
         ax.set_xlim(0, width)
         ax.set_ylim(0, height)
         ax.set_zlim(0, 10)
-        print("w: {} heigth: {}".format(width,height))
+        print("w: {} heigth: {}".format(width, height))
         for i in iDataCurrent.contours[iDataCurrent.currentIndex][0]:
 
             pointX = width - 1 - i[0][0]
-            pointX =  0 if pointX < 0 else pointX
-            pointY =  height - 1 - i[0][1]
+            pointX = 0 if pointX < 0 else pointX
+            pointY = height - 1 - i[0][1]
             pointY = 0 if pointY < 0 else pointY
 
             x.append(i[0][0])
@@ -144,13 +152,13 @@ class Application:
         #x, y, z = self.mapToDivison3D(x, y, z, heigth=5, divisions=1)
         #surf = ax.scatter(x, y, z)
         # ax.legend()
-        
+
         #plt.xlim(0, width)
-        
+
         # Customize the z axis.
         #ax.set_zlim(-1.01, 1.01)
-        #ax.zaxis.set_major_locator(LinearLocator(10))
-        #ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+        # ax.zaxis.set_major_locator(LinearLocator(10))
+        # ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
         # ax.set_xlabel('x')
         # ax.set_ylabel('y')

@@ -1,6 +1,8 @@
 import cv2
 from imageData import ImageData
 
+"""Functions of image segmentation."""
+
 
 def canny(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -18,6 +20,7 @@ def canny(img):
             cx = int(M['m10']/M['m00'])
             cy = int(M['m01']/M['m00'])
             #contoursList.append([c, [cx, cy]])
-            contoursList.append([c,cx,cy])
-    result = ImageData(img,edged, contoursList,[gray,grayBilatel])#contours)
+            contoursList.append([c, cx, cy])
+    result = ImageData(img, edged, contoursList, [
+                       gray, grayBilatel])  # contours)
     return result
