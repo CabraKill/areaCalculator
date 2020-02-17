@@ -31,14 +31,14 @@ def joinImg(iArray):
     return img
 
 
-def packFrameLabelImage(frameMaster, label, image):
-    frameimage = tkinter.Frame(frameMaster)
-    frameimage.pack()
+def packFrameLabelImage(frame, label, image):
+    frameimage = tkinter.Frame(frame)
+    frameimage.pack(side="top")
     labelImage = tkinter.Label(frameimage, text=label)
     labelImage.pack()
-    imageWidget = ImgTk(frameMaster, image)
+    imageWidget = ImgTk(frameimage, image)
     imageWidget.pack()
-    return frameimage
+    return imageWidget
 
 
 def imageScale(realArea, area):

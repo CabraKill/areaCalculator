@@ -7,25 +7,32 @@ from imageData import ImageData
 from const import version
 import pathlib
 import imageOperation as iop
+import pickle as pk
+import os
 
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
+import easygui
 
 
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
-#img = fn.resizeImg(cv2.imread("testeArea.jpeg"), 500)
-# img = fn.resizeImg(cv2.imread("carregador1.jpg"), 500)
-#img = fn.resizeImg(cv2.imread("chaveiroCabuto.jpg"), 500)
-#img = fn.resizeImg(cv2.imread("perfilIsopor4.jpg"), 500)
-#img = fn.resizeImg(cv2.imread("photosTest\\pratinho1.jpg"), 500)
-img = cv2.imread("photosTest\\pratinho2Q.jpg") #scale: imageScale=[0.41,0.17]
-#img = fn.resizeImg(cv2.imread("photosTest\\calda1.jpg"), 500)
+try:
+    imgLocation = pk.load(open("imgLocation.p", "rb"))
+except Exception:
+    imgLocation = str(easygui.fileopenbox(filetypes=["*.*"]))
+    imgLocation.replace("\\", "\\\\")
+    pk.dump(imgLocation, open("imgLocation.p", "wb"))
+finally:
+    print(imgLocation)
+
+# scale: imageScale=[0.41,0.17]
+img = cv2.imread(imgLocation)
+# img = cv2.imread("photosTest\\pratinho2Q.jpg") #scale: imageScale=[0.41,0.17]
 # print(str(pathlib.Path(__file__).parent.absolute())+"\\photosTest\\papelão1.jpg")
-#img = fn.resizeImg(cv2.imread("photosTest\\papelao1.jpg"), 500)
 
 img = fn.resizeImg(img, 500)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -37,11 +44,14 @@ class Application:
         self.title.pack()
 
         self.imageSourceFrame = Frame(master)
-        self.imageSourceFrame.pack()
+        self.imageSourceFrame.pack(side=TOP)
         self.imageSourceLabel = Label(self.imageSourceFrame, text="source")
         self.imageSourceLabel.pack()
         self.imageSource = fn.ImgTk(self.imageSourceFrame, img)
         self.imageSource.pack()
+
+        self.blurSourceImage = fn.packFrameLabelImage(
+            self.imageSourceFrame, "Blur image", img)
 
         # Frame of images
         self.imageArea = Frame(master)
@@ -69,7 +79,10 @@ class Application:
             "<Button-3>", lambda e: self.plotSurface(self.imageCannyData))
         self.imageCannyData.updateImageWidgetDrawed(self.imageCannyDraw, None)
 
-        self.imageCannyDrawScaleButton = Button(self.imageCannyDrawFrame, text="º", command=self.imageCannyData.updateScale)
+        
+
+        self.imageCannyDrawScaleButton = Button(
+            self.imageCannyDrawFrame, text="º", command=self.imageCannyData.updateScale)
         self.imageCannyDrawScaleButton.pack(side="right")
 
         self.imageCannyDrawSlider = Scale(self.imageCannyDrawFrame, from_=0, to=len(
@@ -85,6 +98,14 @@ class Application:
         self.versionLabel = Label(
             master, text="Dígito " + str(version), bg="cyan")
         self.versionLabel.pack(side="bottom")
+
+        self.deleteLocationButton = Button(
+            master, text="Delete", fg="red", command=self.delete)
+        self.deleteLocationButton.pack(side=LEFT)
+
+    @classmethod
+    def delete(self):
+        os.remove("imgLocation.p")
 
     # @staticmethod
     @classmethod
