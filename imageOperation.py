@@ -8,33 +8,41 @@ def drawQuota(image, value, point2, point1=None, orientation=0):
     quota = 20
     color = [255, 0, 0]
     thickness = 2
-    middlex = (point1[0] - point2[0])/2
-    middlex = middlex if middlex >= 0 else -middlex
-    middlex = int(middlex + point1[0])
-    middley = point2[1] + offSet + int(quota/2) + 5
+    value = '%.5f'%(value)
+    
     if(not orientation):
+        middlex = (point1[0] - point2[0])/2
+        middlex = middlex if middlex >= 0 else -middlex
+        middlex = int(middlex + point1[0])
+        middley = point2[1] + offSet + quota + 10
         # horizontal line
         cv2.line(image, (point1[0]+offSet*0, point2[1] +
                          offSet + int(quota/2)), (point2[0]-offSet*0, point2[1]+offSet+int(quota/2)), color, thickness)
         # left line
         cv2.line(image, (point1[0]+offSet*0, point2[1] +
                          offSet), (point1[0]+offSet*0, point2[1]+offSet+quota), color, thickness)
-
         # right line
         cv2.line(image, (point2[0]-offSet*0, point2[1] +
                          offSet), (point2[0]-offSet*0, point2[1]+offSet+quota), color, thickness)
+        #Text
         cv2.putText(img=image, fontScale=0.5, color=color,
                     text=str(value),
                     thickness=1, fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(middlex, middley))
     else:
-        # horizontal end line
+        middlex = point2[0] + offSet + quota + 10
+        middley = int((point1[1] - point2[1])/2)
+        middley = middley + point2[1]
+        
+        # horizontal top line
         cv2.line(image, (point2[0]+offSet, point2[1] +
                          offSet*0), (point2[0]+offSet+quota, point2[1]+offSet*0), color, thickness)
-
         # vertical line
         cv2.line(image, (point2[0]+offSet + int(quota/2), point1[1] +
                          offSet*0), (point2[0]+offSet + int(quota/2), point2[1]+offSet*0), color, thickness)
-
-        # horizontal start line
+        # horizontal bottom line
         cv2.line(image, (point2[0]+offSet, point1[1] +
                          offSet*0), (point2[0]+offSet+quota, point1[1]+offSet*0), color, thickness)
+        # Text
+        cv2.putText(img=image, fontScale=0.5, color=color,
+                    text=str(value),
+                    thickness=1, fontFace=cv2.FONT_HERSHEY_SIMPLEX, org=(middlex, middley))

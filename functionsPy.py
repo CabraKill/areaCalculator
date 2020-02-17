@@ -43,7 +43,7 @@ def packFrameLabelImage(frameMaster, label, image):
 
 def imageScale(realArea, area):
     "Returns an array with the areaScale and the lengthScale"
-    print("realarea: {} | area: {}".format(realArea, area))
+    print("realArea: {}cm² | area: {}px²".format(realArea, area))
     areaScale = realArea/area
     lengthScale = areaScale**0.5
     return [areaScale, lengthScale]

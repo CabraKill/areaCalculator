@@ -101,5 +101,5 @@ class ImageData:
         return area*self.imageScale[0]
 
     def updateScale(self):
-        self.imageScale = fn.imageScale(1, self.getArea())
+        self.imageScale = fn.imageScale(0.95*0.9, self.getArea())
         print("imageScale = {}".format(self.imageScale))

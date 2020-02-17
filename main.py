@@ -22,7 +22,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 #img = fn.resizeImg(cv2.imread("chaveiroCabuto.jpg"), 500)
 #img = fn.resizeImg(cv2.imread("perfilIsopor4.jpg"), 500)
 #img = fn.resizeImg(cv2.imread("photosTest\\pratinho1.jpg"), 500)
-img = cv2.imread("photosTest\\pratinho2Q.jpg")
+img = cv2.imread("photosTest\\pratinho2Q.jpg") #scale: imageScale=[0.41,0.17]
 #img = fn.resizeImg(cv2.imread("photosTest\\calda1.jpg"), 500)
 # print(str(pathlib.Path(__file__).parent.absolute())+"\\photosTest\\papelão1.jpg")
 #img = fn.resizeImg(cv2.imread("photosTest\\papelao1.jpg"), 500)
