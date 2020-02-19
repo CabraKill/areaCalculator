@@ -45,9 +45,11 @@ class Application:
 
         self.imageSourceFrame = Frame(master)
         self.imageSourceFrame.pack(side=TOP)
-        self.imageSourceLabel = Label(self.imageSourceFrame, text="source")
+        self.imageSourceDefaultFrame = Frame(self.imageSourceFrame)
+        self.imageSourceDefaultFrame.pack(side=LEFT)
+        self.imageSourceLabel = Label(self.imageSourceDefaultFrame, text="source")
         self.imageSourceLabel.pack()
-        self.imageSource = fn.ImgTk(self.imageSourceFrame, img)
+        self.imageSource = fn.ImgTk(self.imageSourceDefaultFrame, img)
         self.imageSource.pack()
 
         self.blurSourceImage = fn.packFrameLabelImage(

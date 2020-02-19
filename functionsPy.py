@@ -33,7 +33,7 @@ def joinImg(iArray):
 
 def packFrameLabelImage(frame, label, image):
     frameimage = tkinter.Frame(frame)
-    frameimage.pack(side="top")
+    frameimage.pack(side="left")
     labelImage = tkinter.Label(frameimage, text=label)
     labelImage.pack()
     imageWidget = ImgTk(frameimage, image)
