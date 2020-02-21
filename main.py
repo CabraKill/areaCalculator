@@ -45,15 +45,28 @@ class Application:
 
         self.imageSourceFrame = Frame(master)
         self.imageSourceFrame.pack(side=TOP)
+
         self.imageSourceDefaultFrame = Frame(self.imageSourceFrame)
         self.imageSourceDefaultFrame.pack(side=LEFT)
-        self.imageSourceLabel = Label(self.imageSourceDefaultFrame, text="source")
-        self.imageSourceLabel.pack()
-        self.imageSource = fn.ImgTk(self.imageSourceDefaultFrame, img)
-        self.imageSource.pack()
+        self.imageSourceDefaultLabel = Label(
+            self.imageSourceDefaultFrame, text="source")
+        self.imageSourceDefaultLabel.pack()
+        self.imageSourceDefault = fn.ImgTk(self.imageSourceDefaultFrame, img)
+        self.imageSourceDefault.pack()
 
-        self.blurSourceImage = fn.packFrameLabelImage(
-            self.imageSourceFrame, "Blur image", img)
+        #self.blurSourceImage = fn.packFrameLabelImage(self.imageSourceFrame, "Blur image", iop.blur(img))
+
+        self.imageSourceBlurFrame = Frame(self.imageSourceFrame)
+        self.imageSourceBlurFrame.pack(side=LEFT)
+        self.imageSourceBlurLabel = Label(
+            self.imageSourceBlurFrame, text="Blur image")
+        self.imageSourceBlurLabel.pack()
+        self.imageSourceBlur = fn.ImgTk(
+            self.imageSourceBlurFrame, iop.blur(img, blur=(1, 1)))
+        self.imageSourceBlur.pack()
+        self.imageSourceBlurScale = Scale(self.imageSourceBlurFrame, orient=HORIZONTAL, from_=1, to=20, command=lambda x: ImageData.updateImage(
+            self=self, image=iop.blur(img, blur=(int(x), int(x))), w=self.imageSourceBlur))
+        self.imageSourceBlurScale.pack()
 
         # Frame of images
         self.imageArea = Frame(master)
@@ -80,8 +93,6 @@ class Application:
         self.imageCannyDraw.bind(
             "<Button-3>", lambda e: self.plotSurface(self.imageCannyData))
         self.imageCannyData.updateImageWidgetDrawed(self.imageCannyDraw, None)
-
-        
 
         self.imageCannyDrawScaleButton = Button(
             self.imageCannyDrawFrame, text="º", command=self.imageCannyData.updateScale)
