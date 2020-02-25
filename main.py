@@ -36,6 +36,7 @@ img = cv2.imread(imgLocation)
 
 img = fn.resizeImg(img, 500)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+imgBlur = img.copy()
 
 
 class Application:
@@ -56,6 +57,7 @@ class Application:
 
         #self.blurSourceImage = fn.packFrameLabelImage(self.imageSourceFrame, "Blur image", iop.blur(img))
 
+        #Pack of blured Source
         self.imageSourceBlurFrame = Frame(self.imageSourceFrame)
         self.imageSourceBlurFrame.pack(side=LEFT)
         self.imageSourceBlurLabel = Label(
@@ -65,7 +67,7 @@ class Application:
             self.imageSourceBlurFrame, iop.blur(img, blur=(1, 1)))
         self.imageSourceBlur.pack()
         self.imageSourceBlurScale = Scale(self.imageSourceBlurFrame, orient=HORIZONTAL, from_=1, to=20, command=lambda x: ImageData.updateImage(
-            self=self, image=iop.blur(img, blur=(int(x), int(x))), w=self.imageSourceBlur))
+            self=self, image=iop.blur(img, blur=(int(x), int(x))), w=self.imageSourceBlur,imageToUpdate=imgBlur))
         self.imageSourceBlurScale.pack()
 
         # Frame of images
@@ -73,7 +75,7 @@ class Application:
         self.imageArea.pack()
 
         # Frame of CannyImages
-        self.imageCannyData = imgSeg.canny(img)
+        self.imageCannyData = imgSeg.canny(imgBlur)
         self.imageCannyFrame = Frame(self.imageArea)
         self.imageCannyFrame.pack(side="left")
 
@@ -148,8 +150,9 @@ class Application:
                 y.append(i[0][0])"""
         width = iDataCurrent.imageSource.shape[1]
         height = iDataCurrent.imageSource.shape[0]
-        ax.set_xlim(0, width)
-        ax.set_ylim(0, height)
+        maxSide = int(max(width,height)*1.1)
+        ax.set_xlim(0, maxSide)#width)
+        ax.set_ylim(0, maxSide)#height)
         ax.set_zlim(0, 10)
         print("w: {} heigth: {}".format(width, height))
         for i in iDataCurrent.contours[iDataCurrent.currentIndex][0]:
@@ -181,11 +184,14 @@ class Application:
         #surf = ax.plot_wireframe(x, y, z, rstride=5, cstride=5, label='3d Visualization')
         #x, y, z = self.createMap(x, y, z,square=False)
         #surf = ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True)
+        
         x, y, z = self.mapToDivison3D(x, y, z, heigth=1, divisions=50)
         surf = ax.plot(x, y, z, label='Repartições')
+        
         #x, y, z = self.mapToDivison3D(x, y, z, heigth=5, divisions=1)
         #surf = ax.scatter(x, y, z)
-        # ax.legend()
+        #ax.legend()
+        
 
         #plt.xlim(0, width)
 
@@ -194,9 +200,9 @@ class Application:
         # ax.zaxis.set_major_locator(LinearLocator(10))
         # ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
-        # ax.set_xlabel('x')
-        # ax.set_ylabel('y')
-        # ax.set_zlabel('z')
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_zlabel('z')
         # Add a color bar which maps values to colors.
         #fig.colorbar(surf, shrink=0.5, aspect=5)
         #ax.set_title('Surface plot')
@@ -207,7 +213,8 @@ class Application:
         zLine = np.arange(start, heigth, (heigth - start)/divisions)
         surfaceX = areaX.copy()
         surfaceY = areaY.copy()
-        surfaceZ = areaX.copy()
+        #surfaceZ = areaX.copy()
+        surfaceZ = np.full((len(areaX)),start)
         for i in range(divisions):
             surfaceX = np.concatenate((surfaceX, areaX))
             surfaceY = np.concatenate((surfaceY, areaY))
@@ -360,5 +367,6 @@ class Application:
 
 
 root = Tk()
+root.title('Visão computacional para cálculo de centro geométrico para aeronaves e materiais e seus construção.')
 Application(root)
 root.mainloop()
