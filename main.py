@@ -57,7 +57,7 @@ class Application:
 
         #self.blurSourceImage = fn.packFrameLabelImage(self.imageSourceFrame, "Blur image", iop.blur(img))
 
-        #Pack of blured Source
+        # Pack of blured Source
         self.imageSourceBlurFrame = Frame(self.imageSourceFrame)
         self.imageSourceBlurFrame.pack(side=LEFT)
         self.imageSourceBlurLabel = Label(
@@ -67,7 +67,7 @@ class Application:
             self.imageSourceBlurFrame, iop.blur(img, blur=(1, 1)))
         self.imageSourceBlur.pack()
         self.imageSourceBlurScale = Scale(self.imageSourceBlurFrame, orient=HORIZONTAL, from_=1, to=20, command=lambda x: ImageData.updateImage(
-            self=self, image=iop.blur(img, blur=(int(x), int(x))), w=self.imageSourceBlur,imageToUpdate=imgBlur))
+            self=self, image=iop.blur(img, blur=(int(x), int(x))), w=self.imageSourceBlur, imageToUpdate=imgBlur))
         self.imageSourceBlurScale.pack()
 
         # Frame of images
@@ -97,7 +97,7 @@ class Application:
         self.imageCannyData.updateImageWidgetDrawed(self.imageCannyDraw, None)
 
         self.imageCannyDrawScaleButton = Button(
-            self.imageCannyDrawFrame, text="º", command=self.imageCannyData.updateScale)
+            self.imageCannyDrawFrame, text="Calibrar", command=self.imageCannyData.updateScale)
         self.imageCannyDrawScaleButton.pack(side="right")
 
         self.imageCannyDrawSlider = Scale(self.imageCannyDrawFrame, from_=0, to=len(
@@ -143,18 +143,29 @@ class Application:
         x = []
         y = []
         # print("current x: {}".format(i[0][0][0]))
+        width = iDataCurrent.imageSource.shape[1]
+        height = iDataCurrent.imageSource.shape[0]
+        maxSide = int(max(width, height)*1.1)
+        print("w: {} heigth: {}".format(width, height))
+
         # print everything
         """for contourIndex in range(len(iDataCurrent.contours)):
             for i in iDataCurrent.contours[contourIndex][0]:
-                x.append(i[0][1])
-                y.append(i[0][0])"""
-        width = iDataCurrent.imageSource.shape[1]
-        height = iDataCurrent.imageSource.shape[0]
-        maxSide = int(max(width,height)*1.1)
-        ax.set_xlim(0, maxSide)#width)
-        ax.set_ylim(0, maxSide)#height)
-        ax.set_zlim(0, 10)
-        print("w: {} heigth: {}".format(width, height))
+                # x.append(i[0][1])
+                # y.append(i[0][0])
+
+                pointX = width - 1 - i[0][0]
+                pointX = 0 if pointX < 0 else pointX
+                pointY = height - 1 - i[0][1]
+                pointY = 0 if pointY < 0 else pointY
+
+                x.append(i[0][0])
+                y.append(pointY)"""
+
+        ax.set_xlim(0, maxSide)  # width)
+        ax.set_ylim(0, maxSide)  # height)
+        ax.set_zlim(0, 1)
+
         for i in iDataCurrent.contours[iDataCurrent.currentIndex][0]:
 
             pointX = width - 1 - i[0][0]
@@ -184,14 +195,13 @@ class Application:
         #surf = ax.plot_wireframe(x, y, z, rstride=5, cstride=5, label='3d Visualization')
         #x, y, z = self.createMap(x, y, z,square=False)
         #surf = ax.plot_trisurf(x, y, z, linewidth=0.2, antialiased=True)
-        
-        x, y, z = self.mapToDivison3D(x, y, z, heigth=1, divisions=50)
+
+        x, y, z = self.mapToDivison3D(x, y, z, heigth=0.1, divisions=10)
         surf = ax.plot(x, y, z, label='Repartições')
-        
+
         #x, y, z = self.mapToDivison3D(x, y, z, heigth=5, divisions=1)
         #surf = ax.scatter(x, y, z)
-        #ax.legend()
-        
+        # ax.legend()
 
         #plt.xlim(0, width)
 
@@ -214,7 +224,7 @@ class Application:
         surfaceX = areaX.copy()
         surfaceY = areaY.copy()
         #surfaceZ = areaX.copy()
-        surfaceZ = np.full((len(areaX)),start)
+        surfaceZ = np.full((len(areaX)), start)
         for i in range(divisions):
             surfaceX = np.concatenate((surfaceX, areaX))
             surfaceY = np.concatenate((surfaceY, areaY))

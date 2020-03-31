@@ -38,6 +38,8 @@ def packFrameLabelImage(frame, label, image):
     labelImage.pack()
     imageWidget = ImgTk(frameimage, image)
     imageWidget.pack()
+    imageWidget.bind(
+            "<Button-2>", lambda e: saveImage(image,label))
     return imageWidget
 
 
@@ -58,3 +60,7 @@ def pointDistance(point1, point2, scale=1):
     vertical = point1[1] - point2[1]
     vertical = vertical if vertical >= 0 else -vertical
     return[linear*scale, horizontal*scale, vertical*scale]
+
+def saveImage(image,label):
+    cv2.imwrite(label+".jpg",image)
+    print("Image {} saved!".format(label+".jpg"))
