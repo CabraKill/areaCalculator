@@ -377,6 +377,7 @@ class Application:
 
 
 root = Tk()
-root.title('Visão computacional para cálculo de centro geométrico para aeronaves e materiais e seus construção.')
+#root.title('Visão computacional para cálculo de centro geométrico para aeronaves e materiais e seus construção.')
+root.title('Visão computacional.')
 Application(root)
 root.mainloop()
