@@ -1,2 +1,2 @@
 # areaCalculator
-A python programa to calculate object area with opencv.
+A python programm to calculate object area and dimensions with opencv.
